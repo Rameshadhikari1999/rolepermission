@@ -8,9 +8,11 @@
 
     <div class="w-11/12 mx-auto">
         @include('components.success')
-        @include('roles.create')
         @include('components.conformAlert')
 
+        <div class="mx-9">
+            @include('roles.create')
+        </div>
 
         <div class="w-full">
             <div class="w-full flex flex-col">
@@ -18,7 +20,7 @@
                     <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
                         <div class="overflow-hidden">
                             <table class="min-w-full ">
-                                <thead class="border-b bg-red-300">
+                                <thead class="border-b " style="background: #FEDF15">
                                     <tr>
                                         <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
                                             ID

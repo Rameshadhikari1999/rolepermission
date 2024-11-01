@@ -6,12 +6,16 @@
 <div x-data="{ isOpen: false }">
     <!-- Button to open modal -->
     <div class="w-full flex justify-between mr-32 mt-5">
-        <input type="text" name="search" id="search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Search here.......">
-        <button id="addBtn"
-            class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            type="button">
-            Add
-        </button>
+        <input type="text" name="search" id="search"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            placeholder="Search here.......">
+        @can('create user')
+            <button id="addBtn"
+                class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                type="button">
+                Add
+            </button>
+        @endcan
     </div>
 
     <!-- Main modal -->
@@ -54,19 +58,36 @@
                                 placeholder="Example: 0WbqZ@example.com" required />
                         </div>
                         <div>
-                            <label for="password"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                            <input type="password" name="password" id="password"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="*************" required />
+                            <label for="image"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                            <input type="file" name="image" id="image"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
+                        </div>
+                        <div class="flex gap-5">
+                            <div class="w-1/2">
+                                <label for="password"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                                <input type="password" name="password" id="password"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    placeholder="*************" required />
+                            </div>
+                            <div class="w-1/2">
+                                <label for="confirm-password"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Conform
+                                    Password</label>
+                                <input type="password" name="confquirm-password" id="conform-password"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    placeholder="*************" required />
+                            </div>
                         </div>
                         <div>
-                            <label for="confirm-password"
+                            <label for=""
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
                             <div class="flex items-center gap-5 flex-wrap">
                                 @foreach ($roles as $role)
                                     <div class="flex items-center gap-2">
-                                        <input type="radio" value="{{ $role->name }}" name="roles" id="roles" class="" required />
+                                        <input type="radio" value="{{ $role->name }}" name="roles" id="roles"
+                                            class="" required />
                                         <label for="roles">{{ $role->name }}</label>
                                     </div>
                                 @endforeach

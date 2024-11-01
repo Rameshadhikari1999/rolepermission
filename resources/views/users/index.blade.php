@@ -14,6 +14,7 @@
     <div class="">
 @include('components.conformAlert')
 @include('components.success')
+@include('users.edit')
 {{-- @include('users.edit') --}}
 <div class="mx-20">
     @include('users.create')
@@ -24,7 +25,7 @@
                     <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
                         <div class="overflow-hidden">
                             <table class="min-w-full ">
-                                <thead class="border-b bg-red-300">
+                                <thead class="border-b" style="background: #FEDF15">
                                     <tr>
                                         <th scope="col"
                                             class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
@@ -41,6 +42,10 @@
                                         <th scope="col"
                                             class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
                                             Roles
+                                        </th>
+                                        <th scope="col"
+                                            class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                                            Image
                                         </th>
                                         <th scope="col"
                                             class="text-sm font-medium text-gray-900 px-6 py-4 text-left">

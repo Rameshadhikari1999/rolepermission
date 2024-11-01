@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::get('/users', [RegisteredUserController::class, 'index'])->name('users');
+    Route::get('/users/{role?}', [RegisteredUserController::class, 'index'])->name('users');
     Route::get('/users/{id}/edit', [RegisteredUserController::class, 'edit'])->name('users.edit');
     Route::post('/users/{id}', [RegisteredUserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}/delete', [RegisteredUserController::class, 'destory'])->name('users.destory');
