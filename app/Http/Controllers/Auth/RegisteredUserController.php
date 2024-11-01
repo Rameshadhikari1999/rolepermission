@@ -62,7 +62,8 @@ class RegisteredUserController extends Controller implements HasMiddleware
         $user = User::findOrFail($id);
         $user->delete();
         $users = User::all();
-        return response()->json(['success','deleted successfully']);
+        $view = view('users.table', compact('users'))->render();
+        return response()->json(['users' => $view]);
     }
 
     /**
@@ -78,12 +79,12 @@ class RegisteredUserController extends Controller implements HasMiddleware
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request) //: RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', '', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
@@ -92,10 +93,22 @@ class RegisteredUserController extends Controller implements HasMiddleware
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        // event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // return redirect(route('dashboard', absolute: false));
+        $user->syncRoles($request->roles);
+        $users = User::all();
+        $view = view('users.table', compact('users'))->render();
+        return response()->json(['users' => $view]);
+
+    }
+
+    public function search(Request $request){
+        $users = User::where('name', 'like', '%' . $request->search . '%')
+            ->orWhere('email', 'like', '%' . $request->search . '%')->get();
+        $view = view('users.table', compact('users'))->render();
+        return response()->json(['users' => $view]);
     }
 }

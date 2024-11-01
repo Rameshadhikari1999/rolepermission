@@ -44,6 +44,7 @@
                 cache: false,
                 processData: false,
                 success: function(res) {
+                    console.log(res, 'res')
                     if (res.permissions) {
                         $('#tbody').html(res.permissions);
                         $('#conformModal').hide();
@@ -52,8 +53,9 @@
                         $('#tbody').html(res.roles);
                         $('#conformModal').hide();
                         showSuccessMessage('Role deleted successfully');
-                    } else {
+                    } else if (res.users) {
                         $('#conformModal').hide();
+                        $('#tbody').html(res.users);
                         showSuccessMessage('Deleted successfully');
                     }
                 },

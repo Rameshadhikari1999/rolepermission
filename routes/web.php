@@ -26,6 +26,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/{id}/edit', [RegisteredUserController::class, 'edit'])->name('users.edit');
     Route::post('/users/{id}', [RegisteredUserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}/delete', [RegisteredUserController::class, 'destory'])->name('users.destory');
+    Route::post('/users', [RegisteredUserController::class, 'store'])->name('users.store');
+    Route::get('/users/search', [RegisteredUserController::class, 'search'])->name('users.search');
 
     Route::get('/permissions',[PermissionController::class, 'index'])->name('permissions');
     Route::post('/permissions/store', [PermissionController::class, 'store'])->name('permissions.store');
