@@ -36,12 +36,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/permissions/{id}/update', [PermissionController::class, 'update'])->name('permissions.update');
     Route::get('/rolePermissions', [PermissionController::class, 'rolePermission'])->name('rolePermissions');
     Route::post('/updatePermission', [PermissionController::class, 'updatePermission'])->name('updatePermission');
+    Route::get('/permissions/search', [PermissionController::class, 'search'])->name('permissions.search');
 
     Route::get('/roles', [RoleController::class, 'index'])->name('roles');
     Route::post('/roles/store', [RoleController::class, 'store'])->name('roles.store');
     Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
     Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])->name('roles.edit');
     Route::post('/roles/{id}/update',[RoleController::class, 'update'])->name('roles.update');
+    Route::get('/roles/search', [RoleController::class, 'search'])->name('roles.search');
 
 
 

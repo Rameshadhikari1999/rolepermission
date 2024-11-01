@@ -1,4 +1,5 @@
 @foreach ($users as $user)
+
 <tr>
     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
         {{ $user->id }}
@@ -17,6 +18,7 @@
     </td>
     <td
         class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap flex items-center gap-5">
+        @if (!$user->hasRole('superadmin') || Auth::user()->hasRole('superadmin'))
         @can('edit users')
             <button type="button"
             {{-- @click="isOpen = true" --}}
@@ -28,6 +30,7 @@
                 data-id="{{$user->id}}"
                 class="deleteBtn py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded font-medium">Delete</button>
         @endcan
+        @endif
     </td>
 </tr>
 @endforeach
@@ -47,8 +50,9 @@
         $('.editBtn').on('click', function() {
             // alert('clicked')
             let id = $(this).data('id');
+            $('#editForm').trigger('reset');
             $('#modal-title').text('Edit User');
-            $('#submitBtn').text('Update');
+            $('#updateBtn').text('Update');
             $('#edit-user-modal').show();
             $.ajax({
                 type: "GET",
@@ -60,7 +64,10 @@
                     $('#id').val(res.user.id);
                     $('#name').val(res.user.name);
                     $('#email').val(res.user.email);
-                    $('#previousImage').val(imageUrl+res.user.image);
+                    $('#previousImage').attr('src',imageUrl+'/'+res.user.image);
+                    res.user.roles.forEach((role) => {
+                        $('#role-' + role.id).prop('checked', true);
+                    })
                 },
                 error: function(xhr, status, error) {
                     console.log(xhr.responseText);

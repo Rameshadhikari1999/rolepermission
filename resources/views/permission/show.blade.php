@@ -7,6 +7,18 @@
     </x-slot>
 
     <div class="my-5">
+        @include('components.success')
+        @if(session()->has('success'))
+            <script>
+                $(document).ready(function() {
+                    $('#successMessage').show();
+                    $('#successText').text('{{ session()->get('success') }}');
+                    setTimeout(function() {
+                        $('#successMessage').hide();
+                    }, 3000);
+                })
+            </script>
+        @endif
         <div class="w-full sm:px-6">
             <form action="{{ route('updatePermission') }}" method="POST">
                 @csrf

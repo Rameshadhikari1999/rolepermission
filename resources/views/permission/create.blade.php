@@ -81,11 +81,33 @@
                     $('#permission-modal').hide();
                     console.log(data,'success');
                 },
-                error:function(error){
-                    console.log(error,'error');
+                error:function(xhr) {
+                    if (xhr.responseJSON.errors) {
+                        $('#errorMessage').show();
+                        $('#errorList').empty();
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            $('#errorList').append('<li>' + value[0] + '</li>');
+                        });
+                        console.log(xhr.responseJSON.errors, 'error');
+                    }
                 }
             });
         });
+
+        $('#search').on('keyup', function() {
+            var value = $(this).val().toLowerCase();
+            $.ajax({
+                url: "{{ route('permissions.search') }}",
+                method: "GET",
+                data: {
+                    'search': value
+                },
+                success: function(data) {
+                    $('#tbody').html(data.permissions);
+                }
+            })
+        })
     });
 </script>
 

@@ -104,10 +104,34 @@
                     $('#tbody').html(data.roles);
                     console.log(data, 'success');
                 },
-                error: function(error) {
-                    console.log(error, 'error');
+                error: function(xhr) {
+                    if (xhr.responseJSON.errors) {
+                        $('#errorMessage').show();
+                        $('#errorList').empty();
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            $('#errorList').append('<li>' + value[0] + '</li>');
+                        });
+                        console.log(xhr.responseJSON.errors, 'error');
+                    } else {
+                        console.log(xhr.responseText, 'known error');
+                    }
                 }
             });
+        });
+
+        $('#search').on('keyup', function() {
+            var value = $(this).val().toLowerCase();
+            $.ajax({
+                url: "{{ route('roles.search') }}",
+                method: "GET",
+                data: {
+                    'search': value
+                },
+                success: function(data) {
+                    $('#tbody').html(data.roles);
+                }
+            })
         });
     });
 </script>

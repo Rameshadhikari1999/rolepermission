@@ -20,10 +20,13 @@
 <script>
     $(document).ready(function() {
 
-        function showSuccessMessage(title = "Success", text) {
+        function showDeleteSuccessMessage(title = "Success", text) {
             $('#msgTitle').text(title);
             $('#successText').text(text);
             $('#successMessage').show();
+            setTimeout(() => {
+                $('#successMessage').hide();
+            }, 3000);
         }
 
         $('.closeBtn').on('click', function() {
@@ -48,7 +51,7 @@
                     if (res.permissions) {
                         $('#tbody').html(res.permissions);
                         $('#conformModal').hide();
-                        showSuccessMessage('Permission deleted successfully');
+                        showDeleteSuccessMessage('Permission deleted successfully');
                     } else if (res.roles) {
                         $('#tbody').html(res.roles);
                         $('#conformModal').hide();
@@ -56,7 +59,7 @@
                     } else if (res.users) {
                         $('#conformModal').hide();
                         $('#tbody').html(res.users);
-                        showSuccessMessage('Deleted successfully');
+                        showDeleteSuccessMessage('Deleted successfully');
                     }
                 },
                 error: function(xhr, status, error) {

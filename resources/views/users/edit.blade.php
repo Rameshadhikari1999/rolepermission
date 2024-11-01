@@ -40,7 +40,7 @@
                 </div>
                 <!-- Modal body -->
                 <div class="p-4 md:p-5">
-                    <form id="myForm" class="space-y-4" action="#">
+                    <form id="editForm" class="space-y-4" action="#">
                         @csrf
                         <input type="hidden" name="id" id="id">
                         <div>
@@ -58,8 +58,7 @@
                                 placeholder="Example: 0WbqZ@example.com" required />
                         </div>
                         <div>
-                            <img id="previousImage" src="" width="50" height="50"
-                                alt=" not found">
+                            <img id="previousImage" src="" width="50" height="50" alt=" not found">
                         </div>
                         <div>
                             <label for="image"
@@ -72,23 +71,23 @@
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                             <input type="password" name="password" id="password"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="*************" required />
+                                placeholder="*************" />
                         </div>
                         <div>
                             <label for=""
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
                             <div class="flex items-center gap-5 flex-wrap">
                                 @foreach ($roles as $role)
-                                    <div class="flex items-center gap-2">
-                                        <input type="checkbox" value="{{ $role->name }}" name="roles" id="roles"
-                                            class="" required />
-                                        <label for="roles">{{ $role->name }}</label>
+                                    <div>
+                                        <input type="checkbox" name="roles[]" id="role-{{ $role->id }}"
+                                            value="{{ $role->name }}">
+                                        <label for="roles-{{ $role->id }}">{{ $role->name }}</label>
                                     </div>
                                 @endforeach
                             </div>
                         </div>
                         <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-                            <button type="submit" id="submitBtn"
+                            <button type="submit" id="updateBtn"
                                 class="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded"></button>
                         </div>
                     </form>
@@ -99,8 +98,39 @@
 </div>
 <script>
     $(document).ready(function() {
+        function showEditSuccessMessage(message) {
+            $('#successText').text(message);
+            $('#successMessage').show();
+            setTimeout(function() {
+                $('#successMessage').hide();
+            }, 3000);
+        }
         $('#closeBtn').click(function() {
             $('#edit-user-modal').hide();
-        })
+        });
+
+        $('#editForm').on('submit', function(e) {
+            e.preventDefault();
+            var id = $('#id').val();
+            $.ajax({
+                url: "{{ route('users.update', ':id') }}".replace(':id', id),
+                method: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                dataType: "json",
+                success: function(data) {
+                    // console.log(data);
+                    showEditSuccessMessage('User Updated successfully');
+                    $('#myForm')[0].reset();
+                    $('#tbody').html(data.users);
+                    $('#edit-user-modal').hide();
+                },
+                error: function(error) {
+                    console.log(error, 'error');
+                }
+            });
+        });
     });
 </script>

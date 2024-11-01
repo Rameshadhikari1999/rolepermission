@@ -43,7 +43,8 @@ class RegisteredUserController extends Controller implements HasMiddleware
     {
         $user = User::findOrFail($id);
         $roles = Role::all();
-        return response()->json(['user' => $user, 'roles' => $roles]);
+        $hasRole = $user->roles->pluck('name')->toArray();
+        return response()->json(['user' => $user, 'roles' => $roles, 'hasRole' => $hasRole]);
     }
 
     // update user
@@ -57,6 +58,23 @@ class RegisteredUserController extends Controller implements HasMiddleware
 
         $user = User::findOrFail($id);
 
+        if($request->hasFile('image')) {
+            if ($user->image) {
+                $file_path = storage_path('app/public/' . $user->image);
+                if (file_exists($file_path)) {
+                    unlink($file_path);
+                }
+            }
+            $original_name = $request->file('image')->getClientOriginalName();
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $filename = $original_name . '_' . time() . '.' . $extension;
+            $path = $request->file('image')->storeAs('upload/images', $filename, 'public');
+            $user->image = $path;
+        }
+
+        if ($request->password) {
+            $user->password = Hash::make($request->password);
+        }
         $user->name = $request->name;
         $user->email = $request->email;
         $user->save();
@@ -64,7 +82,11 @@ class RegisteredUserController extends Controller implements HasMiddleware
         // Sync roles using Spatie package
         $user->syncRoles($request->roles);
 
-        return redirect(route('users'))->with('success', 'User updated successfully');
+        // return redirect(route('users'))->with('success', 'User updated successfully');
+
+        $users = User::all();
+        $view = view('users.table', compact('users'))->render();
+        return response()->json(['users' => $view]);
     }
 
     public function destory($id)
@@ -103,7 +125,7 @@ class RegisteredUserController extends Controller implements HasMiddleware
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'roles' => ['required'],
             'images' => ['image', 'mimes:jpeg,png,jpg,gif,svg'],
-            'password' => ['required', '', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         // upload image

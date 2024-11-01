@@ -26,9 +26,9 @@
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white" id="modal-title">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white" id="user-modal-title">
                     </h3>
-                    <button id="closeBtn" type="button"
+                    <button id="closeModalBtn" type="button"
                         class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 14 14">
@@ -75,7 +75,7 @@
                                 <label for="confirm-password"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Conform
                                     Password</label>
-                                <input type="password" name="confquirm-password" id="conform-password"
+                                <input type="password" name="password_confirmation" id="conform-password"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                     placeholder="*************" required />
                             </div>
@@ -110,25 +110,29 @@
             $('#msgTitle').text(title);
             $('#successText').text(text);
             $('#successMessage').show();
+            setTimeout(function() {
+                $('#successMessage').hide();
+            }, 3000);
         }
 
-        $('#closeBtn').click(function() {
+        $('#closeModalBtn').on('click', function() {
+            // alert('close');
             $('#user-modal').hide();
-        })
+        });
+
         $('#addBtn').click(function() {
             $('#myForm').trigger('reset');
             $('#id').val('');
-            $('#modal-title').text('Add User');
+            $('#user-modal-title').text('Add User');
             $('#submitBtn').text('Add');
             $('#user-modal').show();
         });
 
         $('#myForm').on('submit', function(e) {
             e.preventDefault();
-            var id = $('#id').val();
+            // var id = $('#id').val();
             $.ajax({
-                url: id ? "{{ route('users.update', ':id') }}".replace(':id', id) :
-                    "{{ route('users.store') }}",
+                url:"{{ route('users.store') }}",
                 method: "POST",
                 data: new FormData(this),
                 contentType: false,
@@ -137,14 +141,23 @@
                 dataType: "json",
                 success: function(data) {
                     console.log(data);
-                    showSuccessMessage(id ? 'User Updated successfully' :
-                        'user Added successfully');
+                    showSuccessMessage('user Added successfully');
                     $('#myForm')[0].reset();
                     $('#tbody').html(data.users);
                     $('#user-modal').hide();
                 },
-                error: function(error) {
-                    console.log(error, 'error');
+                error: function(xhr) {
+                    if (xhr.responseJSON.errors) {
+                        $('#errorMessage').show();
+                        $('#errorList').empty();
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            $('#errorList').append('<li>' + value[0] + '</li>');
+                        });
+                        console.log(xhr.responseJSON.errors, 'error');
+                    } else {
+                        console.log(xhr.responseText, 'known error');
+                    }
                 }
             });
         });

@@ -102,4 +102,10 @@ class RoleController extends Controller implements HasMiddleware
         $view = view('roles.table', compact('roles'))->render();
         return response()->json(['roles'=> $view]);
     }
+    public function search(Request $request)
+    {
+        $roles = Role::where('name', 'like', '%' . $request->search . '%')->get();
+        $view = view('roles.table', compact('roles'))->render();
+        return response()->json(['roles' => $view]);
+    }
 }

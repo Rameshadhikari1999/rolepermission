@@ -7,6 +7,7 @@
     </x-slot>
 
     <div class="w-11/12 mx-auto">
+        @include('components.errerAlert')
         @include('components.success')
         @include('components.conformAlert')
 

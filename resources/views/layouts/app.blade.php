@@ -35,12 +35,12 @@
 
             <!-- Page Content -->
             <main class="mx-0 flex flex-col lg:flex-row min-h-screen">
-                <div class="w-1/6 bg-gray-200 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
+                <div class="w-full lg:w-1/6 bg-gray-200 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="w-full p-6 text-gray-900 flex gap-5 lg:flex-col lg:gap-2 flex-wrap">
                         @include('layouts.sidebar')
                     </div>
                 </div>
-                <div class="w-5/6">
+                <div class="w-full lg:w-5/6">
                     {{ $slot }}
                 </div>
             </main>

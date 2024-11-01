@@ -26,7 +26,7 @@ class PermissionController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $permissions = Permission::all();
+        $permissions = Permission::orderBy('id', 'asc')->paginate(5);
         return view('permission.index', compact('permissions'));
     }
 
@@ -121,6 +121,13 @@ class PermissionController extends Controller implements HasMiddleware
         $permission = Permission::find($id);
         $permission->delete();
         $permissions = Permission::all();
+        $view = view('permission.table', compact('permissions'))->render();
+        return response()->json(['permissions' => $view]);
+    }
+
+    public function search(Request $request)
+    {
+        $permissions = Permission::where('name', 'like', '%' . $request->search . '%')->get();
         $view = view('permission.table', compact('permissions'))->render();
         return response()->json(['permissions' => $view]);
     }
