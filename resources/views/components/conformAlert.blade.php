@@ -20,8 +20,7 @@
 <script>
     $(document).ready(function() {
 
-        function showDeleteSuccessMessage(title = "Success", text) {
-            $('#msgTitle').text(title);
+        function showDeleteSuccessMessage(text) {
             $('#successText').text(text);
             $('#successMessage').show();
             setTimeout(() => {
@@ -55,11 +54,11 @@
                     } else if (res.roles) {
                         $('#tbody').html(res.roles);
                         $('#conformModal').hide();
-                        showSuccessMessage('Role deleted successfully');
+                        showDeleteSuccessMessage('Role deleted successfully');
                     } else if (res.users) {
                         $('#conformModal').hide();
                         $('#tbody').html(res.users);
-                        showDeleteSuccessMessage('Deleted successfully');
+                        showDeleteSuccessMessage('User Deleted successfully');
                     }
                 },
                 error: function(xhr, status, error) {

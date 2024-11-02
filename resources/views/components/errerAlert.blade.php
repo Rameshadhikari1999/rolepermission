@@ -14,8 +14,8 @@
             $('#errorMessage').hide();
         });
 
-        setTimeout(() => {
-            $('#successMessage').hide();
-        }, 5000);
+        // setTimeout(() => {
+        //     $('#successMessage').hide();
+        // }, 5000);
     });
 </script>

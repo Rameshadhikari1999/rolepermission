@@ -5,10 +5,10 @@
 @endphp
 <div x-data="{ isOpen: false }">
     <!-- Button to open modal -->
-    <div class="w-full flex justify-between mr-32 mt-5">
-        <input type="text" name="search" id="search"
+    <div class="w-full flex justify-end mr-32 mt-5">
+        {{-- <input type="text" name="searchUser" id="searchUser"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-            placeholder="Search here.......">
+            placeholder="Search here......."> --}}
         @can('create user')
             <button id="addBtn"
                 class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -44,7 +44,7 @@
                         @csrf
                         <input type="hidden" name="id" id="id">
                         <div>
-                            <label for="email"
+                            <label for="name"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
                             <input type="text" name="name" id="name"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
@@ -58,26 +58,30 @@
                                 placeholder="Example: 0WbqZ@example.com" required />
                         </div>
                         <div>
+                            <img id="previousImage" src="" width="50" height="50" alt=" not found"
+                                style="display: none">
+                        </div>
+                        <div>
                             <label for="image"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image</label>
                             <input type="file" name="image" id="image"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                         </div>
-                        <div class="flex gap-5">
+                        <div class="flex gap-5" id="passwordDiv" style="display: none">
                             <div class="w-1/2">
                                 <label for="password"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                                 <input type="password" name="password" id="password"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    placeholder="*************" required />
+                                    placeholder="*************" />
                             </div>
                             <div class="w-1/2">
                                 <label for="confirm-password"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Conform
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm
                                     Password</label>
                                 <input type="password" name="password_confirmation" id="conform-password"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    placeholder="*************" required />
+                                    placeholder="*************" />
                             </div>
                         </div>
                         <div>
@@ -86,8 +90,8 @@
                             <div class="flex items-center gap-5 flex-wrap">
                                 @foreach ($roles as $role)
                                     <div class="flex items-center gap-2">
-                                        <input type="radio" value="{{ $role->name }}" name="roles" id="roles"
-                                            class="" required />
+                                        <input type="radio" value="{{ $role->name }}" name="roles"
+                                            id="role-{{ $role->id }}" class="" required />
                                         <label for="roles">{{ $role->name }}</label>
                                     </div>
                                 @endforeach
@@ -106,42 +110,56 @@
 </div>
 <script>
     $(document).ready(function() {
-        function showSuccessMessage(title = "Success", text) {
-            $('#msgTitle').text(title);
+
+//         window.addEventListener('error', function(event) {
+//     console.error('Global Error:', event.error || event.message);
+// });
+
+// window.addEventListener('unhandledrejection', function(event) {
+//     console.error('Unhandled Promise Rejection:', event.reason);
+// });
+
+
+        function showSuccessMessage(text) {
             $('#successText').text(text);
             $('#successMessage').show();
             setTimeout(function() {
                 $('#successMessage').hide();
-            }, 3000);
+            }, 5000);
         }
 
         $('#closeModalBtn').on('click', function() {
-            // alert('close');
             $('#user-modal').hide();
         });
 
         $('#addBtn').click(function() {
             $('#myForm').trigger('reset');
-            $('#id').val('');
+            $('#id').val(null);
             $('#user-modal-title').text('Add User');
             $('#submitBtn').text('Add');
+            $('#previousImage').hide();
+            $('#passwordDiv').show();
             $('#user-modal').show();
         });
 
         $('#myForm').on('submit', function(e) {
             e.preventDefault();
-            // var id = $('#id').val();
+            console.log('e', e);
+            var id = $('#id').val();
+            // alert(id);
+            var formData = new FormData(this);
             $.ajax({
-                url:"{{ route('users.store') }}",
-                method: "POST",
-                data: new FormData(this),
+                url: id ? "{{ route('users.update', ':id') }}".replace(':id', id) :
+                    "{{ route('users.store') }}",
+                method: id ? "POST" : "POST",
+                data: formData,
                 contentType: false,
                 cache: false,
                 processData: false,
                 dataType: "json",
                 success: function(data) {
-                    console.log(data);
-                    showSuccessMessage('user Added successfully');
+                    showSuccessMessage(id ? 'User Updated Successfully' :
+                        'User Added Successfully');
                     $('#myForm')[0].reset();
                     $('#tbody').html(data.users);
                     $('#user-modal').hide();
@@ -154,6 +172,9 @@
                         $.each(errors, function(key, value) {
                             $('#errorList').append('<li>' + value[0] + '</li>');
                         });
+                        setTimeout(function() {
+                            $('#errorMessage').hide();
+                        }, 5000);
                         console.log(xhr.responseJSON.errors, 'error');
                     } else {
                         console.log(xhr.responseText, 'known error');
@@ -165,16 +186,33 @@
 
         // search
 
-        $('#search').on('keyup', function() {
+        $('#searchUser').on('keyup', function() {
             var value = $(this).val().toLowerCase();
+            console.log('value', value);
             $.ajax({
                 url: "{{ route('users.search') }}",
                 method: "GET",
                 data: {
-                    'search': value
+                    'searchUser': value
                 },
+                // dataType: "json",
+                // contentType: false,
+                // cache: false,
+                // processData: false,
                 success: function(data) {
+                    console.log(data, 'data');
                     $('#tbody').html(data.users);
+                },
+                error: function(xhr) {
+                    if(xhr.responseJSON.errors) {
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            $('#errorList').append('<li>' + value[0] + '</li>');
+                        });
+                        setTimeout(function() {
+                            $('#errorMessage').hide();
+                        }, 5000);
+                    }
                 }
             })
         });

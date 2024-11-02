@@ -48,29 +48,45 @@
         });
 
         $('.editBtn').on('click', function() {
-            // alert('clicked')
+
             let id = $(this).data('id');
-            $('#editForm').trigger('reset');
-            $('#modal-title').text('Edit User');
-            $('#updateBtn').text('Update');
-            $('#edit-user-modal').show();
+            // $('#myForm').trigger('reset');
+            $('#passwordDiv').hide();
+            $('#user-modal-title').text('Edit User');
+            $('#submitBtn').text('Update');
+            $('#user-modal').show();
             $.ajax({
                 type: "GET",
                 url: "{{ route('users.edit', ':id') }}".replace(':id', id),
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
                 dataType: "json",
                 success: function(res) {
-                    var imageUrl = "{{ $user->image ? asset('storage/') : '' }}";
-                    console.log(imageUrl+res.user.image);
+
                     $('#id').val(res.user.id);
                     $('#name').val(res.user.name);
                     $('#email').val(res.user.email);
-                    $('#previousImage').attr('src',imageUrl+'/'+res.user.image);
+                    if(res.user.image){
+                        var imageUrl = "{{ asset('storage') }}";
+                        $('#previousImage').show();
+                        $('#previousImage').attr('src',imageUrl+'/'+res.user.image);
+                    }else{
+                        $('#previousImage').hide();
+                    }
                     res.user.roles.forEach((role) => {
-                        $('#role-' + role.id).prop('checked', true);
+                        $('#role-' + role.id).prop( 'checked', true);
                     })
                 },
                 error: function(xhr, status, error) {
-                    console.log(xhr.responseText);
+                    if(xhr.responseJSON.errors){
+                        $('#errorMessage').show();
+                        $('#errorList').empty();
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            $('#errorList').append('<li>' + value[0] + '</li>');
+                        });
+                    }
                 }
             });
         });

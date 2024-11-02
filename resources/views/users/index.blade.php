@@ -15,8 +15,6 @@
         @include('components.errerAlert')
         @include('components.conformAlert')
         @include('components.success')
-        @include('users.edit')
-        {{-- @include('users.edit') --}}
         <div class="mx-20">
             @include('users.create')
         </div>

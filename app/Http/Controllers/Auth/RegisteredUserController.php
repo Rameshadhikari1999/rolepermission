@@ -136,13 +136,11 @@ class RegisteredUserController extends Controller implements HasMiddleware
             $filename = $original_name . '_' . time() . '.' . $extension;
             $path = $request->file('image')->storeAs('upload/images', $filename, 'public');
         }
-        // return response()->json($path);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            // 'image' => $path
         ]);
 
         $user->image = $path;
@@ -161,8 +159,10 @@ class RegisteredUserController extends Controller implements HasMiddleware
 
     public function search(Request $request)
     {
-        $users = User::where('name', 'like', '%' . $request->search . '%')
-            ->orWhere('email', 'like', '%' . $request->search . '%')->get();
+        // $search = $request->searchUser;
+        $users = User::where('name', 'like', '%' . $request->searchUser . '%')
+            ->orWhere('email', 'like', '%' . $request->searchUser . '%')
+            ->get();
         $view = view('users.table', compact('users'))->render();
         return response()->json(['users' => $view]);
     }

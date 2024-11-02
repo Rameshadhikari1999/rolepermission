@@ -45,10 +45,12 @@
 <script>
 
     $(document).ready(function() {
-        function showSuccessMessage(title="Success", text) {
-            $('#msgTitle').text(title);
+        function showSuccessMessage(text) {
             $('#successText').text(text);
             $('#successMessage').show();
+            setTimeout(function() {
+                $('#successMessage').hide();
+            }, 3000);
         }
 
         $('#closeBtn').click(function() {
@@ -74,7 +76,7 @@
                 processData: false,
                 dataType: "json",
                 success: function(data) {
-                    showSuccessMessage(id ? 'Permission Updated' : 'Permission Added');
+                    showSuccessMessage(id ? 'Permission Updated Successfully' : 'Permission Added Successfully');
                     $('#permission-modal').hide();
                     $('#myForm')[0].reset();
                     $('#tbody').html(data.permissions);
@@ -89,6 +91,10 @@
                         $.each(errors, function(key, value) {
                             $('#errorList').append('<li>' + value[0] + '</li>');
                         });
+
+                        setTimeout(function() {
+                            $('#errorMessage').hide();
+                        }, 5000);
                         console.log(xhr.responseJSON.errors, 'error');
                     }
                 }
