@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -44,6 +45,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])->name('roles.edit');
     Route::post('/roles/{id}/update',[RoleController::class, 'update'])->name('roles.update');
     Route::get('/roles/search', [RoleController::class, 'search'])->name('roles.search');
+
+
+    Route::get('/accounts', [AccountController::class, 'index'])->name('accounts');
+    Route::post('/accounts/store',[AccountController::class,'store'])->name('accounts.store');
+    Route::get('/accounts/{id}/edit',[AccountController::class,'edit'])->name('accounts.edit');
+    Route::post('/accounts/update',[AccountController::class,'update'])->name('account.update');
+    Route::delete('account/{id}/delete', [AccountController::class, 'destory'])->name('accounts.destory');
+    Route::get('/accounts/search',[AccountController::class,'search'])->name('accounts.search');
 
 
 

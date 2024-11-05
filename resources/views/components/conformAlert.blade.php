@@ -60,6 +60,11 @@
                         $('#tbody').html(res.users);
                         showDeleteSuccessMessage('User Deleted successfully');
                     }
+                    else if(res.accounts){
+                        $('#conformModal').hide();
+                        $('#tbody').html(res.accounts);
+                        showDeleteSuccessMessage('Account Deleted successfully');
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.log(xhr.responseText);

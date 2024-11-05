@@ -30,3 +30,10 @@
             </x-nav-link>
         </div>
         @endcan
+        {{-- @can('view ') --}}
+        <div class="w-full space-y-1 bg-yellow-500 font-bold text-white rounded my-2">
+            <x-nav-link :href="route('accounts')" :active="request()->routeIs('accounts')">
+                {{ __('Accounts') }}
+            </x-nav-link>
+        </div>
+        {{-- @endcan --}}
