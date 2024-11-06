@@ -5,11 +5,18 @@
         <input type="text" name="search" id="search"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
             placeholder="Search here.......">
-        <button id="addBtn"
-            class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            type="button">
-            Add
-        </button>
+            <div class="flex gap-5">
+                <select class="w-36 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" id="bankSearch" name="bankSearch">
+                    <option value="">Search By Bank</option>
+                    <option value="kumari">Kumari bank</option>
+                    <option value="global">Global bank</option>
+                </select>
+                <button id="addBtn"
+                class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                type="button">
+                Add
+            </button>
+        </div>
     </div>
 
     <!-- Main modal -->
@@ -37,12 +44,9 @@
                     <form id="myForm" class="space-y-4" action="#">
                         @csrf
                         <input type="hidden" name="id" id="id">
-                        <div>
-                            <label for="cheque_number"
-                                class="block text-base font-medium text-gray-900 dark:text-white">Cheque Number</label>
-                            <input type="text" name="cheque_number" id="cheque_number"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                style="display: none" />
+                        <div id="cheque_number">
+                            <label for="cheque_number_input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cheque Number</label>
+                            <input type="text" name="cheque_number" id="cheque_number_input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                         </div>
                         <div class="w-full flex items-center justify-between" id="chequeNumberDiv"
                             style="display: none">
@@ -62,9 +66,12 @@
                         <div>
                             <label for="bank_name" class="mb-2 text-sm font-medium">Bank Name<span
                                     class="text-red-500">*</span></label>
-                            <input type="text" name="bank_name" id="bank_name"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="Example: Kumari bank" />
+                            <select name="bank_name" id="bank_name"
+                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                <option value="">Select Bank</option>
+                                <option value="kumari bank">Kumari bank</option>
+                                <option value="global bank">Global bank</option>
+                            </select>
                         </div>
                         <div>
                             <label for="amount" class="mb-2 text-sm font-medium">Amount<span
@@ -72,6 +79,11 @@
                             <input type="number" name="amount" id="amount"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Example: 10000" />
+                        </div>
+                        <div>
+                            <label for="remark" class="mb-2 text-sm font-medium">Remark<span
+                                class="text-red-500">*</span></label></label>
+                                <textarea name="remark" id="remark" cols="40" rows="5" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"></textarea>
                         </div>
                         <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
                             <button type="submit" id="submitBtn"
@@ -155,6 +167,20 @@
         });
 
         $('#search').on('keyup', function() {
+            var value = $(this).val().toLowerCase();
+            $.ajax({
+                url: "{{ route('accounts.search') }}",
+                method: "GET",
+                data: {
+                    'search': value
+                },
+                success: function(res) {
+                    $('#tbody').html(res.accounts);
+                }
+            })
+        })
+
+        $('#bankSearch').on('change', function() {
             var value = $(this).val().toLowerCase();
             $.ajax({
                 url: "{{ route('accounts.search') }}",

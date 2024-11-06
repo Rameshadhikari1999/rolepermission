@@ -53,6 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/accounts/update',[AccountController::class,'update'])->name('account.update');
     Route::delete('account/{id}/delete', [AccountController::class, 'destory'])->name('accounts.destory');
     Route::get('/accounts/search',[AccountController::class,'search'])->name('accounts.search');
+    Route::post('/accounts/{id}/update/status',[AccountController::class, 'updateStatus'])->name('accounts.updateStatus');
 
 
 

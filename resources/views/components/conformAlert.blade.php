@@ -6,6 +6,7 @@
     </div>
     {{-- body  --}}
     <div class="w-full px-5 py-5">
+        <input type="hidden" id="status" name="status">
         <p id="message" class="text-center font-bold text-lg text-red-400 font-serif"></p>
     </div>
     {{-- footer  --}}
@@ -34,17 +35,23 @@
 
         $('#conformBtn').on('click', function() {
             var url = $(this).attr('data-url');
-            // console.log(url, 'url')
+            var status = $('#status').val();
+            var statusNum = Number(status);
+            // console.log(typeof statusNum);
+            var formData = {
+                status:statusNum,
+            };
             $.ajax({
-                type: "DELETE",
+                type: status?"POST":"DELETE",
                 url: url,
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 dataType: "json",
-                contentType: false,
+                contentType: status?"application/json":false,
                 cache: false,
                 processData: false,
+                data:JSON.stringify(formData),
                 success: function(res) {
                     console.log(res, 'res')
                     if (res.permissions) {
@@ -63,7 +70,7 @@
                     else if(res.accounts){
                         $('#conformModal').hide();
                         $('#tbody').html(res.accounts);
-                        showDeleteSuccessMessage('Account Deleted successfully');
+                        showDeleteSuccessMessage(status?'Account status update successfully':"Account deleted successfully");
                     }
                 },
                 error: function(xhr, status, error) {

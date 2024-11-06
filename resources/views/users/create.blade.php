@@ -9,7 +9,7 @@
         {{-- <input type="text" name="searchUser" id="searchUser"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
             placeholder="Search here......."> --}}
-        @can('create user')
+        @can('create users')
             <button id="addBtn"
                 class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 type="button">
@@ -89,11 +89,13 @@
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
                             <div class="flex items-center gap-5 flex-wrap">
                                 @foreach ($roles as $role)
-                                    <div class="flex items-center gap-2">
-                                        <input type="radio" value="{{ $role->name }}" name="roles"
-                                            id="role-{{ $role->id }}" class="" required />
-                                        <label for="roles">{{ $role->name }}</label>
-                                    </div>
+                                @if ($role->name !=='superadmin' || Auth::user()->hasRole('superadmin'))
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" value="{{ $role->name }}" name="roles"
+                                    id="role-{{ $role->id }}" class="" required />
+                                    <label for="roles">{{ $role->name }}</label>
+                                </div>
+                                @endif
                                 @endforeach
 
                             </div>
@@ -195,10 +197,6 @@
                 data: {
                     'searchUser': value
                 },
-                // dataType: "json",
-                // contentType: false,
-                // cache: false,
-                // processData: false,
                 success: function(data) {
                     console.log(data, 'data');
                     $('#tbody').html(data.users);

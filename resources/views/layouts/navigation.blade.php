@@ -22,7 +22,7 @@
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2  text-sm leading-4 font-medium rounded-full text-gray-700 hover:text-gray-700 focus:outline-none transition ease-in-out duration-150 " style="#FEDF15">
                             <div class="text-2xl font-bold uppercase">
-                                <img src="{{ Auth::user()->image ? asset('storage/'.Auth::user()->image): 'https://ui-avatars.com/api/?name='.Auth::user()->name }}" class="w-10 h-10 rounded-full" alt="">
+                                <img id="navbar-profile" src="{{ Auth::user()->image ? asset('storage/'.Auth::user()->image): 'https://ui-avatars.com/api/?name='.Auth::user()->name }}" class="w-10 h-10 rounded-full" alt="">
                             </div>
 
                             <div class="ms-1">

@@ -9,24 +9,31 @@ use function Pest\Laravel\json;
 
 class AccountController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $accounts = Account::all();
         return view('account.index', compact('accounts'));
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
+
         $request->validate([
-            'from'=>['required'],
-            'to'=>['required'],
+            'from' => ['required'],
+            'to' => ['required'],
         ]);
-        $curentChequeNumber = 'cheque_no:' . $request->from;
-        $account = Account::where('cheque_number', $curentChequeNumber)->first();
-        if($account){
-            return response()->json(['error'=>'Cheque number all ready exist']);
+
+        $account = Account::where('cheque_number', $request->from)->first();
+
+        if ($account) {
+            if ($account->bank_name === $request->bank_name) {
+                return response()->json(['error' => 'An Bank with this cheque number already exists']);
+            }
         }
+
         for ($i = $request->from; $i <= $request->to; $i++) {
             Account::create([
-                'cheque_number' => 'cheque_no:'.$i,
+                'cheque_number' => $i,
                 'bank_name' => $request->bank_name ?? "",
                 'amount' => $request->amount ?? 0,
                 'status' => $request->status ?? 0,
@@ -36,63 +43,114 @@ class AccountController extends Controller
 
         $accounts = Account::orderBy('id', 'asc')->get();
         $view = view('account.table', compact('accounts'))->render();
-        return response()->json(['accounts'=> $view]);
-
+        return response()->json(['accounts' => $view]);
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $account = Account::findOrFail($id);
-        if(!$account){
-            return response()->json(['error'=>'Account not found']);
+        if (!$account) {
+            return response()->json(['error' => 'Account not found']);
         }
-        return response()->json(['account'=>$account]);
+        return response()->json(['account' => $account]);
     }
 
 
-    public function update(Request $request){
-        $request->validate([
-            'cheque_number' => 'required'
-        ]);
+    public function update(Request $request)
+    {
+
         $account = Account::findOrFail($request->id);
-        if(!$account){
-            return response()->json(['error'=> 'Account Not Found']);
+
+        if (!$account) {
+            return response()->json(['error' => 'Account Not Found']);
         }
-        $cheque_number = $request->cheque_number;
+
         $bank_name = $request->bank_name;
         $amount = $request->amount;
+        $cheque_number = $request->cheque_number;
 
-        $account->cheque_number = $cheque_number;
-        if($bank_name){
-            $account->bank_name = $bank_name;
+        // same cheque number but different bank name
+        if ($account->cheque_number === $cheque_number) {
+            if ($account->bank_name !== $bank_name) {
+                $account_exists = Account::where('cheque_number', $cheque_number)->get();
+                if (count($account_exists) > 1) {
+                    return response()->json(['error' => 'An Bank with this cheque number already exists']);
+                } else {
+                    $account->bank_name = $bank_name;
+                }
+            }
+        } else {
+            // cheque number doesn't match but bank name same
+            if ($account->bank_name === $bank_name) {
+                $account_exists = Account::where('cheque_number', $cheque_number)
+                    ->where('bank_name', $bank_name)->first();
+                if ($account_exists) {
+                    return response()->json(['error' => 'An Bank with this cheque number already exists']);
+                } else {
+                    $account->cheque_number = $cheque_number;
+                }
+            } else {
+                // do not same cheque number and bank name
+                $account_exists = Account::where('cheque_number', $cheque_number)
+                    ->where('bank_name', $bank_name)->first();
+                if ($account_exists) {
+                    return response()->json(['error' => 'An Bank with this cheque number already exists']);
+                } else {
+                    $account->cheque_number = $cheque_number;
+                    $account->bank_name = $bank_name;
+                }
+            }
         }
-        if($amount){
-            $account->amount = $amount;
-        }
+
+        $account->amount = $amount;
+        $account->remark = $request->remark;
         $account->save();
         $accounts = Account::orderBy('id', 'asc')->get();
         $view = view('account.table', compact('accounts'))->render();
-        return response()->json(['accounts'=>$view]);
+        return response()->json(['accounts' => $view]);
     }
 
 
-    public function destory($id) {
+    public function destory($id)
+    {
         $account = Account::findOrFail($id);
-        if(!$account){
-            return response()->json(['error'=>'Account Not Found']);
+        if (!$account) {
+            return response()->json(['error' => 'Account Not Found']);
         }
         $account->delete();
-        $accounts = Account::orderBy('id','asc')->get();
+        $accounts = Account::orderBy('id', 'asc')->get();
         $view = view('account.table', compact('accounts'))->render();
-        return response()->json(['accounts'=> $view]);
+        return response()->json(['accounts' => $view]);
     }
 
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         $search = $request->search;
-        $accounts = Account::where('cheque_number','like','%'.$search.'%')
-        ->orWhere('bank_name', 'like','%'.$search.'%')
-        ->orWhere('amount','like','%'.$search.'%')
-        ->get();
+        $accounts = Account::where('cheque_number', 'like', '%' . $search . '%')
+            ->orWhere('bank_name', 'like', '%' . $search . '%')
+            ->orWhere('amount', 'like', '%' . $search . '%')
+            ->get();
         $view = view('account.table', compact('accounts'))->render();
-        return response()->json(['accounts'=>$view]);
+        return response()->json(['accounts' => $view]);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        // return response()->json($request);
+        $request->validate([
+            'status' => 'required|integer'
+        ]);
+
+        $account = Account::findOrFail($id);
+        if (!$account) {
+            return response()->json(['error' => 'Account not found']);
+        }
+
+        $account->status = $request->status;
+        $account->update();
+
+        $accounts = Account::all();
+        $view = view('account.table', compact('accounts'))->render();
+        return response()->json(['accounts' => $view]);
     }
 }
