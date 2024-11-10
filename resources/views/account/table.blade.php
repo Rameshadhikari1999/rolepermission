@@ -1,8 +1,8 @@
 @if ($accounts->count() > 0)
-    @foreach ($accounts as $account)
+    @foreach ($accounts as $key => $account)
         <tr class="relative">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {{ $account->id }}
+                {{ $key+1 }}
             </td>
             <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                 {{ $account->cheque_number }}
@@ -15,23 +15,23 @@
             </td>
             <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                 @if ($account->status == 0)
-                    {!! Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('user')
+                    {!! Auth::user()->hasRole('superadmin') || Auth::user()->hasPermissionTo('update status')
                         ? '<button onclick="updateStatus(' .
                             $account->id .
                             ', 1)" type="button" class="py-2 px-4 bg-red-400 text-white hover:bg-red-300 rounded font-medium">Pending</button>'
-                        : 'Pending' !!}
+                        : '<span class="text-red-500">Pending</span>' !!}
                 @elseif ($account->status == 1)
-                    {!! Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin')
+                    {!! Auth::user()->hasRole('superadmin')
                         ? '<button onclick="updateStatus(' .
                             $account->id .
                             ', 2)" type="button" class="py-2 px-4 bg-blue-400 text-white hover:bg-blue-300 rounded font-medium">Inprogress</button>'
-                        : 'Inprogress' !!}
+                        : '<span class="text-blue-500">Inprogress</span>' !!}
                 @else
                     {!! Auth::user()->hasRole('superadmin')
                         ? '<button onclick="updateStatus(' .
                             $account->id .
                             ', 0)" type="button" class="py-2 px-4 bg-green-400 text-white hover:bg-green-300 rounded font-medium">Approved</button>'
-                        : 'Approved' !!}
+                        : '<span class="text-green-500">Approved</span>' !!}
                 @endif
 
             </td>
@@ -47,10 +47,11 @@
                 @endif
             </td>
             <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap flex items-center gap-5">
-                @if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))
-                    <button type="button" data-id="{{ $account->id }}"
-                        class="editBtn py-2 px-4 bg-green-500 text-white hover:bg-green-600 rounded font-medium">Edit</button>
-
+                @if (Auth::user()->hasRole('superadmin') || Auth::user()->hasPermissionTo('edit accounts'))
+                <button type="button" data-id="{{ $account->id }}"
+                    class="editBtn py-2 px-4 bg-green-500 text-white hover:bg-green-600 rounded font-medium">Edit</button>
+                    @endif
+                    @if (Auth::user()->hasRole('superadmin') || Auth::user()->hasPermissionTo('delete accounts'))
                     <button type="button" data-id="{{ $account->id }}"
                         class="deleteBtn py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded font-medium">Delete</button>
                 @endif

@@ -6,9 +6,23 @@ use App\Models\Account;
 use Illuminate\Http\Request;
 
 use function Pest\Laravel\json;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class AccountController extends Controller
+
+class AccountController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new middleware('permission:view accounts', only: ['index']),
+            // new middleware('permission:view permissions', only: ['rolePermission']),
+            // new middleware('permission:update permissions', only: ['updatePermission']),
+            // new middleware('permission:delete permissions', only: ['destroy']),
+            // new middleware('permission:create permissions', only: ['create','store']),
+        ];
+    }
     public function index()
     {
         $accounts = Account::all();

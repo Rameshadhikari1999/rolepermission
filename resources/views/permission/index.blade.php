@@ -37,7 +37,7 @@
                                     @include('permission.table')
                                 </tbody>
                             </table>
-                            {{ $permissions->links() }}
+                            {{-- {{ $permissions->links() }} --}}
                             {{-- {!! $permissions->links() !!} --}}
                         </div>
                     </div>

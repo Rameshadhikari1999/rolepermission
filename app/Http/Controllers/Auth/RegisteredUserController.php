@@ -86,6 +86,9 @@ class RegisteredUserController extends Controller implements HasMiddleware
 
         $users = User::all();
         $view = view('users.table', compact('users'))->render();
+        if($user->id == auth()->user()->id)
+        return response()->json(['users' => $view,'user_image'=>asset('storage/'.$user->image)]);
+    else
         return response()->json(['users' => $view]);
     }
 

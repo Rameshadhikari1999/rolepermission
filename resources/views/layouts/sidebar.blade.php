@@ -9,20 +9,20 @@
                 {{ __('Users') }}
             </x-nav-link>
         </div>
-        @can('view permissions')
+        {{-- @can('view permissions')
         <div class="w-full space-y-1 bg-yellow-500 font-bold text-white rounded my-2">
             <x-nav-link :href="route('permissions')" :active="request()->routeIs('permissions')">
                 {{ __('Permissions') }}
             </x-nav-link>
         </div>
-        @endcan
-        @can('view roles')
+        @endcan --}}
+        {{-- @can('view roles')
         <div class="w-full space-y-1 bg-yellow-500 font-bold text-white rounded my-2">
             <x-nav-link :href="route('roles')" :active="request()->routeIs('roles')">
                 {{ __('Roles') }}
             </x-nav-link>
         </div>
-        @endcan
+        @endcan --}}
         @can('view permissions')
         <div class="w-full space-y-1 bg-yellow-500 font-bold text-white rounded my-2">
             <x-nav-link :href="route('rolePermissions')" :active="request()->routeIs('rolePermissions')">
@@ -30,10 +30,10 @@
             </x-nav-link>
         </div>
         @endcan
-        {{-- @can('view ') --}}
+        @can('view accounts')
         <div class="w-full space-y-1 bg-yellow-500 font-bold text-white rounded my-2">
             <x-nav-link :href="route('accounts')" :active="request()->routeIs('accounts')">
                 {{ __('Accounts') }}
             </x-nav-link>
         </div>
-        {{-- @endcan --}}
+        @endcan

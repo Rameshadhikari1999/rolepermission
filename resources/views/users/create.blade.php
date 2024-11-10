@@ -164,7 +164,12 @@
                         'User Added Successfully');
                     $('#myForm')[0].reset();
                     $('#tbody').html(data.users);
-                    $('#user-modal').hide();
+                    if(data.user_image){
+                        console.log('user_image',data.user_image);
+                    $('#navbar-profile').attr('src', data.user_image);
+
+                    }
+                     $('#user-modal').hide();
                 },
                 error: function(xhr) {
                     if (xhr.responseJSON.errors) {

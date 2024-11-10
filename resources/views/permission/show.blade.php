@@ -20,6 +20,15 @@
             </script>
         @endif
         <div class="w-full sm:px-6">
+            <div class="flex items-center justify-end gap-5 px-12 mb-2">
+                @can('view permissions')
+                <a href="{{route('permissions')}}" class="py-2 px-6 bg-yellow-500 border-none outline-none text-sm text-white hover:bg-yellow-600 rounded cursor-pointer">Permissions</a>
+                @endcan
+                @can('view roles')
+                <a href="{{'roles'}}" class="py-2 px-6 bg-yellow-500 border-none outline-none text-sm text-white hover:bg-yellow-600 rounded cursor-pointer">Roles</a>
+                @endcan
+
+            </div>
             <form action="{{ route('updatePermission') }}" method="POST">
                 @csrf
                 @method('POST')
