@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/users', [RegisteredUserController::class, 'store'])->name('users.store');
     Route::get('/users/search', [RegisteredUserController::class, 'search'])->name('users.search');
 
-    Route::get('/permissions',[PermissionController::class, 'index'])->name('permissions');
+    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions');
     Route::post('/permissions/store', [PermissionController::class, 'store'])->name('permissions.store');
     Route::delete('/permissions/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
     Route::get('/permissions/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
@@ -38,26 +38,26 @@ Route::middleware('auth')->group(function () {
     Route::get('/rolePermissions', [PermissionController::class, 'rolePermission'])->name('rolePermissions');
     Route::post('/updatePermission', [PermissionController::class, 'updatePermission'])->name('updatePermission');
     Route::get('/permissions/search', [PermissionController::class, 'search'])->name('permissions.search');
+    Route::get('/onlyusers/permissions', [PermissionController::class, 'onlyUserPermissions'])->name('onlyUserPermissions');
+    Route::post('/onlyusers/permissions', [PermissionController::class, 'updateOnlyUserPermission'])->name('updateOnlyUserPermission');
+    Route::get('/onlyusers/edit/{id}/permission', [PermissionController::class, 'editOnlyUserPermission'])->name('editOnlyUserPermission');
+    Route::delete('/onlyusers/delete/{id}/permission', [PermissionController::class, 'destroyOnlyUserPermission'])->name('destroyOnlyUserPermission');
 
     Route::get('/roles', [RoleController::class, 'index'])->name('roles');
     Route::post('/roles/store', [RoleController::class, 'store'])->name('roles.store');
     Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
     Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])->name('roles.edit');
-    Route::post('/roles/{id}/update',[RoleController::class, 'update'])->name('roles.update');
+    Route::post('/roles/{id}/update', [RoleController::class, 'update'])->name('roles.update');
     Route::get('/roles/search', [RoleController::class, 'search'])->name('roles.search');
 
 
     Route::get('/accounts', [AccountController::class, 'index'])->name('accounts');
-    Route::post('/accounts/store',[AccountController::class,'store'])->name('accounts.store');
-    Route::get('/accounts/{id}/edit',[AccountController::class,'edit'])->name('accounts.edit');
-    Route::post('/accounts/update',[AccountController::class,'update'])->name('account.update');
+    Route::post('/accounts/store', [AccountController::class, 'store'])->name('accounts.store');
+    Route::get('/accounts/{id}/edit', [AccountController::class, 'edit'])->name('accounts.edit');
+    Route::post('/accounts/update/{id}', [AccountController::class, 'update'])->name('account.update');
     Route::delete('account/{id}/delete', [AccountController::class, 'destory'])->name('accounts.destory');
-    Route::get('/accounts/search',[AccountController::class,'search'])->name('accounts.search');
-    Route::post('/accounts/{id}/update/status',[AccountController::class, 'updateStatus'])->name('accounts.updateStatus');
-
-
-
-
+    Route::get('/accounts/search', [AccountController::class, 'search'])->name('accounts.search');
+    Route::post('/accounts/{id}/update/status', [AccountController::class, 'updateStatus'])->name('accounts.updateStatus');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

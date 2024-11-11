@@ -70,10 +70,10 @@ class AccountController extends Controller implements HasMiddleware
     }
 
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
 
-        $account = Account::findOrFail($request->id);
+        $account = Account::findOrFail($id);
 
         if (!$account) {
             return response()->json(['error' => 'Account Not Found']);

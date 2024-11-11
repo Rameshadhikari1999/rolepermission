@@ -7,6 +7,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Models\User;
 
 class PermissionController extends Controller implements HasMiddleware
 {
@@ -18,7 +19,8 @@ class PermissionController extends Controller implements HasMiddleware
             new middleware('permission:view permissions', only: ['rolePermission']),
             new middleware('permission:update permissions', only: ['updatePermission']),
             new middleware('permission:delete permissions', only: ['destroy']),
-            new middleware('permission:create permissions', only: ['create','store']),
+            new middleware('permission:create permissions', only: ['create', 'store']),
+            new middleware('permission:view permissions', only: ['onlyUserPermissions']),
         ];
     }
     /**
@@ -29,6 +31,8 @@ class PermissionController extends Controller implements HasMiddleware
         $permissions = Permission::orderBy('id', 'asc')->get();
         return view('permission.index', compact('permissions'));
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -44,7 +48,7 @@ class PermissionController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required','unique:permissions,name', 'string', 'max:255'],
+            'name' => ['required', 'unique:permissions,name', 'string', 'max:255'],
         ]);
 
         $permission = Permission::create([
@@ -63,10 +67,10 @@ class PermissionController extends Controller implements HasMiddleware
     {
         $permissions = Permission::all();
         $roles = Role::all();
-        return view('permission.show',[
+        return view('permission.show', [
             'permissions' => $permissions,
             'roles' => $roles
-            ]);
+        ]);
     }
 
     public function updatePermission(Request $request)
@@ -74,8 +78,7 @@ class PermissionController extends Controller implements HasMiddleware
         $roles = Role::all();
 
         foreach ($roles as $role) {
-            if (isset($request->permissions[$role->id]))
-            {
+            if (isset($request->permissions[$role->id])) {
                 $role->syncPermissions($request->permissions[$role->id]);
             } else {
                 $role->syncPermissions([]);
@@ -130,5 +133,42 @@ class PermissionController extends Controller implements HasMiddleware
         $permissions = Permission::where('name', 'like', '%' . $request->search . '%')->get();
         $view = view('permission.table', compact('permissions'))->render();
         return response()->json(['permissions' => $view]);
+    }
+
+    public function onlyUserPermissions()
+    {
+        $permissionUsers = User::all();
+        $permissions = Permission::all();
+        return view('permission.userPermission', compact('permissionUsers', 'permissions'));
+    }
+
+    public function updateOnlyUserPermission(Request $request)
+    {
+        $request->validate([
+            'user_id' => ['required'],
+            'permission' => ['required'],
+        ]);
+        $user = User::find($request->user_id);
+        $user->syncPermissions($request->permission);
+        $permissionUsers = User::all();
+        $view = view('permission.permissionTable', compact('permissionUsers'))->render();
+        return response()->json(['permissionUsers' => $view]);
+    }
+
+
+    public function editOnlyUserPermission($id)
+    {
+        $user = User::find($id);
+        $hasPermission = $user->getDirectPermissions();
+        return response()->json(['permissionUsers' => $user, 'hasPermission' => $hasPermission]);
+    }
+
+    public function destroyOnlyUserPermission($id)
+    {
+        $user = User::find($id);
+        $user->syncPermissions([]);
+        $permissionUsers = User::all();
+        $view = view('permission.permissionTable', compact('permissionUsers'))->render();
+        return response()->json(['permissionUsers' => $view]);
     }
 }

@@ -5,14 +5,15 @@
         <input type="text" name="search" id="search"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
             placeholder="Search here.......">
-        <div class="flex gap-5">
-            <select
-                class="w-36 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                id="bankSearch" name="bankSearch">
-                <option value="">Search By Bank</option>
-                <option value="kumari">Kumari bank</option>
-                <option value="global">Global bank</option>
-            </select>
+        <div class="flex gap-5 w-1/3 items-center">
+            <div class="w-full">
+                <select name="bankSearch" id="bankSearch"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                    <option value="kumari bank">Kumari bank</option>
+                    <option value="global bank">Global bank</option>
+                    <!-- Add more options here -->
+                </select>
+            </div>
             <button id="addBtn"
                 class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 type="button">
@@ -43,7 +44,7 @@
                 </div>
                 <!-- Modal body -->
                 <div class="p-4 md:p-5">
-                    <form id="myForm" class="space-y-4" action="#">
+                    <form id="accountForm" class="space-y-4" action="#">
                         @csrf
                         <input type="hidden" name="id" id="id">
                         <div id="cheque_number">
@@ -68,25 +69,22 @@
                                     placeholder="Example: 5" />
                             </div>
                         </div>
-                        <div>
-                            <label for="bank_name" class="mb-2 text-sm font-medium">Bank Name<span
+                        <div class="w-full">
+                            <label for="bank_name" class="mb-2 text-sm font-medium block">Bank Name<span
                                     class="text-red-500">*</span></label>
                             <select name="bank_name" id="bank_name"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                                <option value="">Select Bank</option>
                                 <option value="kumari bank">Kumari bank</option>
                                 <option value="global bank">Global bank</option>
-                                <option>
-                                    <input type="text" name="bankSearch" id="bankSearch" placeholder="Search........"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                                </option>
+                                <!-- Add more options here -->
                             </select>
                         </div>
                         <div>
                             <label for="amount" class="mb-2 text-sm font-medium">Amount<span
                                     class="text-red-500">*</span></label>
                             <input type="number" name="amount" id="amount"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                                 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Example: 10000" />
                         </div>
                         <div>
@@ -105,11 +103,43 @@
         </div>
     </div>
 </div>
+{{-- <script>
+    document.getElementById('bankDropdown').addEventListener('click', function() {
+        document.getElementById('bankSearch').classList.toggle('hidden');
+        document.getElementById('bankList').classList.toggle('hidden');
+    });
+
+    document.getElementById('bankSearch').addEventListener('input', function() {
+        var filter = this.value.toLowerCase();
+        var options = document.querySelectorAll('#bankList li');
+        options.forEach(function(option) {
+            var text = option.textContent.toLowerCase();
+            if (text.indexOf(filter) > -1) {
+                option.style.display = '';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+    });
+
+    // Close dropdown if clicked outside
+    window.addEventListener('click', function(e) {
+        if (!e.target.closest('.relative')) {
+            document.getElementById('bankSearch').classList.add('hidden');
+            document.getElementById('bankList').classList.add('hidden');
+        }
+    });
+</script> --}}
 <script>
     $(document).ready(function() {
 
-        $('#bank_name').on('click', function() {
-            $('#bankSearch').show();
+        $('#bank_name').select2({
+            placeholder: "Select Bank",
+            allowClear: true,
+        });
+        $('#bankSearch').select2({
+            placeholder: "Search by bank name",
+            allowClear: true,
         });
 
         function showSuccessMessage(text) {
@@ -124,8 +154,9 @@
             $('#account-modal').hide();
         })
         $('#addBtn').click(function() {
-            $('#myForm').trigger('reset');
+            $('#accountForm').trigger('reset');
             $('#id').val('');
+            $('#bank_name').val(null).trigger('change');
             $('#chequeNumberDiv').show();
             $('#cheque_number').hide();
             $('#modal-title').text('Add Account');
@@ -133,13 +164,13 @@
             $('#account-modal').show();
         });
 
-        $('#myForm').on('submit', function(e) {
+        $('#accountForm').on('submit', function(e) {
             e.preventDefault();
             var id = $('#id').val();
             $.ajax({
                 url: id ? "{{ route('account.update', ':id') }}".replace(':id', id) :
                     "{{ route('accounts.store') }}",
-                method: "POST",
+                method: id ? "POST" : "POST",
                 data: new FormData(this),
                 contentType: false,
                 cache: false,

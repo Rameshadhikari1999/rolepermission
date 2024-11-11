@@ -1,0 +1,20 @@
+.select2-container--default .select2-selection--single {
+    min-width: 10rem;
+    height: 2.2rem;
+    line-height: 2.2rem;
+    background-color: #f9fafb;
+    border: 1px solid #d1d5db;
+    color: #1f2937;
+    font-size: 0.875rem;
+    border-radius: 0.4rem;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #171718;
+    /* placeholder color */
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #6b7280;
+    /* dark placeholder color */
+}

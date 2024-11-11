@@ -39,19 +39,19 @@
             var statusNum = Number(status);
             // console.log(typeof statusNum);
             var formData = {
-                status:statusNum,
+                status: statusNum,
             };
             $.ajax({
-                type: status?"POST":"DELETE",
+                type: status ? "POST" : "DELETE",
                 url: url,
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 dataType: "json",
-                contentType: status?"application/json":false,
+                contentType: status ? "application/json" : false,
                 cache: false,
                 processData: false,
-                data:JSON.stringify(formData),
+                data: JSON.stringify(formData),
                 success: function(res) {
                     console.log(res, 'res')
                     if (res.permissions) {
@@ -66,11 +66,16 @@
                         $('#conformModal').hide();
                         $('#tbody').html(res.users);
                         showDeleteSuccessMessage('User Deleted successfully');
-                    }
-                    else if(res.accounts){
+                    } else if (res.permissionUsers) {
+                        $('#conformModal').hide();
+                        $('#permissiontbody').html(res.permissionUsers);
+                        showDeleteSuccessMessage('Permission removed successfully');
+                    } else if (res.accounts) {
                         $('#conformModal').hide();
                         $('#tbody').html(res.accounts);
-                        showDeleteSuccessMessage(status?'Account status update successfully':"Account deleted successfully");
+                        showDeleteSuccessMessage(status ?
+                            'Account status update successfully' :
+                            "Account deleted successfully");
                     }
                 },
                 error: function(xhr, status, error) {

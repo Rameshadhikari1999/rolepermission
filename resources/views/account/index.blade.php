@@ -1,8 +1,7 @@
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Accounts') }}
+            {{ __('Cheques Inventory') }}
         </h2>
 
     </x-slot>
@@ -11,6 +10,7 @@
         @include('components.errerAlert')
         @include('components.conformAlert')
         @include('components.success')
+        @include('account.statusModel')
         <div class="mx-20">
             @include('account.create')
         </div>
